@@ -1,0 +1,9 @@
+name = "personal-website"
+compatibility_date = "2024-12-08"
+
+# Pages configuration
+pages_build_output_dir = "dist"
+
+# Environment variables (if needed)
+[vars]
+ENVIRONMENT = "production"

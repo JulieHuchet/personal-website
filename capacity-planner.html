@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Design Capacity & Planning Copilot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 24px;
+        }
+
+        .header h1 {
+            color: #0f172a;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #64748b;
+            font-size: 16px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .card {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .card h2 {
+            color: #0f172a;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .designer-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .designer-name {
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 4px;
+        }
+
+        .designer-availability {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+
+        .capacity-bar {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .capacity-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .capacity-appropriate { background: #10b981; }
+        .capacity-slight { background: #f59e0b; }
+        .capacity-over { background: #ef4444; }
+
+        .capacity-text {
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .text-appropriate { color: #059669; }
+        .text-slight { color: #d97706; }
+        .text-over { color: #dc2626; }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 6px;
+        }
+
+        .form-group select,
+        .form-group input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background: #2563eb;
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+
+        .initiative-item {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .initiative-header {
+            display: flex;
+            justify-content: between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .initiative-name {
+            font-weight: 600;
+            color: #111827;
+            flex: 1;
+        }
+
+        .priority-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-left: 8px;
+        }
+
+        .priority-p1 { background: #fee2e2; color: #991b1b; }
+        .priority-p2 { background: #fef3c7; color: #92400e; }
+        .priority-p3 { background: #dbeafe; color: #1e40af; }
+        .priority-p4 { background: #f3e8ff; color: #6b21a8; }
+        .priority-p5 { background: #f0f9ff; color: #0369a1; }
+
+        .size-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-right: 8px;
+        }
+
+        .size-s { background: #dcfce7; color: #166534; }
+        .size-m { background: #fef3c7; color: #92400e; }
+        .size-l { background: #fed7aa; color: #9a3412; }
+        .size-xl { background: #fecaca; color: #991b1b; }
+
+        .initiative-details {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+
+        .integration-section {
+            background: #f0f9ff;
+            border: 1px solid #0ea5e9;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .integration-section h3 {
+            color: #0369a1;
+            margin-bottom: 12px;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+
+        .alert-warning {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            color: #92400e;
+        }
+
+        .alert-danger {
+            background: #fee2e2;
+            border: 1px solid #ef4444;
+            color: #991b1b;
+        }
+
+        .scenarios-section {
+            grid-column: 1 / -1;
+        }
+
+        .scenario {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .scenario h4 {
+            color: #0f172a;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .talking-points {
+            background: #f0fdf4;
+            border: 1px solid #22c55e;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+
+        .talking-points h4 {
+            color: #15803d;
+            margin-bottom: 12px;
+        }
+
+        .talking-points ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .talking-points li {
+            margin-bottom: 8px;
+            padding-left: 16px;
+            position: relative;
+        }
+
+        .talking-points li:before {
+            content: "💬";
+            position: absolute;
+            left: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Design Capacity & Planning Copilot</h1>
+            <p>Assess workload, negotiate priorities, and drive focused planning conversations with PMs</p>
+        </div>
+
+        <!-- Integration Section -->
+        <div class="integration-section">
+            <h3>📊 Data Integration Setup</h3>
+            <p><strong>Planning for:</strong> Q3 (Testing Phase) | <strong>All Product Areas</strong> | <strong>All Designers</strong></p>
+            <div style="margin-top: 12px;">
+                <button class="btn" onclick="showJiraIntegration()">Connect Jira</button>
+                <button class="btn btn-secondary" onclick="showSmartsheetIntegration()">Connect Smartsheet</button>
+                <button class="btn btn-secondary" onclick="loadSampleData()">Load Sample Data</button>
+            </div>
+        </div>
+
+        <div class="grid">
+            <!-- Designer Capacity -->
+            <div class="card">
+                <h2>👥 Designer Capacity (Q3)</h2>
+                <div id="designer-capacity">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Add Initiative -->
+            <div class="card">
+                <h2>➕ Add Initiative</h2>
+                <form id="initiative-form">
+                    <div class="form-group">
+                        <label for="initiative-name">Initiative Name</label>
+                        <input type="text" id="initiative-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="product-area">Product Area</label>
+                        <select id="product-area" required>
+                            <option value="">Select Area</option>
+                            <option value="Experience Lab">Experience Lab</option>
+                            <option value="Email Security">Email Security</option>
+                            <option value="Devices & Filtering">Devices & Filtering</option>
+                            <option value="Access">Access</option>
+                            <option value="Data Security">Data Security</option>
+                            <option value="Network Services">Network Services</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="t-shirt-size">T-shirt Size</label>
+                        <select id="t-shirt-size" required>
+                            <option value="">Select Size</option>
+                            <option value="S">S (8% - Small enhancement)</option>
+                            <option value="M">M (31% - Medium feature)</option>
+                            <option value="L">L (80% - Large project)</option>
+                            <option value="XL">XL (160% - Major initiative)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="priority">Priority</label>
+                        <select id="priority" required>
+                            <option value="">Select Priority</option>
+                            <option value="P1">P1 - Must Have</option>
+                            <option value="P2">P2 - Should Have</option>
+                            <option value="P3">P3 - Nice to Have</option>
+                            <option value="P4">P4 - Future</option>
+                            <option value="P5">P5 - Backlog</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="assigned-designer">Assigned Designer</label>
+                        <select id="assigned-designer" required>
+                            <option value="">Select Designer</option>
+                            <option value="Tc Ye">Tc Ye</option>
+                            <option value="Thi Le">Thi Le</option>
+                            <option value="Chris Nemeth">Chris Nemeth</option>
+                            <option value="Natalie Yeh">Natalie Yeh</option>
+                            <option value="Nick Reed">Nick Reed</option>
+                            <option value="Rhiannon Richards">Rhiannon Richards</option>
+                            <option value="Leah Wang">Leah Wang</option>
+                            <option value="Yelena Koslova">Yelena Koslova</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn">Add Initiative</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Current Initiatives -->
+        <div class="card">
+            <h2>📋 Current Initiatives (Q3)</h2>
+            <div id="initiatives-list">
+                <p style="color: #64748b; text-align: center; padding: 20px;">No initiatives added yet. Use the form above or load sample data.</p>
+            </div>
+        </div>
+
+        <!-- Capacity Analysis -->
+        <div class="card">
+            <h2>⚠️ Capacity Alerts</h2>
+            <div id="capacity-alerts">
+                <!-- Populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Prioritization Scenarios -->
+        <div class="card scenarios-section">
+            <h2>🎯 Prioritization Scenarios</h2>
+            <div id="scenarios">
+                <div class="scenario">
+                    <h4>Scenario A: Must-Have Focus</h4>
+                    <p>Focus only on P1 initiatives, park everything else for Q4.</p>
+                    <div id="scenario-a-details"></div>
+                </div>
+                <div class="scenario">
+                    <h4>Scenario B: Balanced Approach</h4>
+                    <p>P1 initiatives + 1-2 strategic P2 bets per product area.</p>
+                    <div id="scenario-b-details"></div>
+                </div>
+                <div class="scenario">
+                    <h4>Scenario C: Distributed Coverage</h4>
+                    <p>Shallow coverage across multiple initiatives, higher risk.</p>
+                    <div id="scenario-c-details"></div>
+                </div>
+            </div>
+
+            <div class="talking-points">
+                <h4>🗣️ PM Conversation Talking Points</h4>
+                <ul>
+                    <li><strong>Timeline Reality Check:</strong> "What's the real consequence if this ships in Q4 instead of Q3?"</li>
+                    <li><strong>Scope Negotiation:</strong> "Can we break this XL initiative into testable L + M pieces?"</li>
+                    <li><strong>Priority Forcing:</strong> "If we could only do 2 of these 5 initiatives well, which ones?"</li>
+                    <li><strong>Minimum Viable:</strong> "What's the minimum viable version that still delivers value?"</li>
+                    <li><strong>Design Readiness:</strong> "Do we have clear acceptance criteria for design work?"</li>
+                    <li><strong>Trade-off Clarity:</strong> "If we keep X, we need to move Y to Q4. Are you aligned?"</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Designer data with Q3/Q4 constraints
+        const designers = [
+            { name: 'Tc Ye', availability: 100 },
+            { name: 'Thi Le', availability: 100 },
+            { name: 'Chris Nemeth', availability: 67 }, // Out 4 weeks in Q4, affects Q3 planning
+            { name: 'Natalie Yeh', availability: 100 },
+            { name: 'Nick Reed', availability: 100 },
+            { name: 'Rhiannon Richards', availability: 100 },
+            { name: 'Leah Wang', availability: 75 }, // Out 3 weeks in Q4, affects Q3 planning
+            { name: 'Yelena Koslova', availability: 100 }
+        ];
+
+        // T-shirt size to percentage mapping
+        const sizeMapping = {
+            'S': 8,
+            'M': 31,
+            'L': 80,
+            'XL': 160
+        };
+
+        // Store initiatives
+        let initiatives = [];
+
+        // Initialize designer capacity display
+        function initializeDesignerCapacity() {
+            const container = document.getElementById('designer-capacity');
+            container.innerHTML = '';
+
+            designers.forEach(designer => {
+                const designerCard = document.createElement('div');
+                designerCard.className = 'designer-card';
+                designerCard.innerHTML = `
+                    <div class="designer-name">${designer.name}</div>
+                    <div class="designer-availability">Available: ${designer.availability}% capacity</div>
+                    <div class="capacity-bar">
+                        <div class="capacity-fill capacity-appropriate" id="capacity-${designer.name.replace(' ', '-')}" style="width: 0%"></div>
+                    </div>
+                    <div class="capacity-text text-appropriate" id="capacity-text-${designer.name.replace(' ', '-')}">0% utilized</div>
+                `;
+                container.appendChild(designerCard);
+            });
+        }
+
+        // Calculate designer workload
+        function calculateDesignerWorkload(designerName) {
+            return initiatives
+                .filter(init => init.assignedDesigner === designerName)
+                .reduce((total, init) => total + sizeMapping[init.size], 0);
+        }
+
+        // Update capacity displays
+        function updateCapacityDisplays() {
+            designers.forEach(designer => {
+                const workload = calculateDesignerWorkload(designer.name);
+                const utilization = (workload / designer.availability) * 100;
+                
+                const fillElement = document.getElementById(`capacity-${designer.name.replace(' ', '-')}`);
+                const textElement = document.getElementById(`capacity-text-${designer.name.replace(' ', '-')}`);
+                
+                fillElement.style.width = `${Math.min(utilization, 100)}%`;
+                textElement.textContent = `${Math.round(utilization)}% utilized`;
+                
+                // Update colors based on capacity thresholds
+                fillElement.className = 'capacity-fill';
+                textElement.className = 'capacity-text';
+                
+                if (utilization <= 85) {
+                    fillElement.classList.add('capacity-appropriate');
+                    textElement.classList.add('text-appropriate');
+                } else if (utilization <= 100) {
+                    fillElement.classList.add('capacity-slight');
+                    textElement.classList.add('text-slight');
+                } else {
+                    fillElement.classList.add('capacity-over');
+                    textElement.classList.add('text-over');
+                }
+            });
+            
+            updateCapacityAlerts();
+        }
+
+        // Update capacity alerts
+        function updateCapacityAlerts() {
+            const alertsContainer = document.getElementById('capacity-alerts');
+            alertsContainer.innerHTML = '';
+            
+            const overloadedDesigners = designers.filter(designer => {
+                const utilization = (calculateDesignerWorkload(designer.name) / designer.availability) * 100;
+                return utilization > 100;
+            });
+            
+            const nearCapacityDesigners = designers.filter(designer => {
+                const utilization = (calculateDesignerWorkload(designer.name) / designer.availability) * 100;
+                return utilization > 85 && utilization <= 100;
+            });
+            
+            if (overloadedDesigners.length > 0) {
+                const alert = document.createElement('div');
+                alert.className = 'alert alert-danger';
+                alert.innerHTML = `<strong>🚨 Critical Overload:</strong> ${overloadedDesigners.map(d => d.name).join(', ')} exceed 100% capacity. Immediate rebalancing required.`;
+                alertsContainer.appendChild(alert);
+            }
+            
+            if (nearCapacityDesigners.length > 0) {
+                const alert = document.createElement('div');
+                alert.className = 'alert alert-warning';
+                alert.innerHTML = `<strong>⚠️ Near Capacity:</strong> ${nearCapacityDesigners.map(d => d.name).join(', ')} are 85-100% utilized. Monitor closely.`;
+                alertsContainer.appendChild(alert);
+            }
+            
+            if (overloadedDesigners.length === 0 && nearCapacityDesigners.length === 0) {
+                alertsContainer.innerHTML = '<p style="color: #059669;">✅ All designers within healthy capacity ranges.</p>';
+            }
+        }
+
+        // Add initiative
+        function addInitiative(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const initiative = {
+                id: Date.now(),
+                name: document.getElementById('initiative-name').value,
+                productArea: document.getElementById('product-area').value,
+                size: document.getElementById('t-shirt-size').value,
+                priority: document.getElementById('priority').value,
+                assignedDesigner: document.getElementById('assigned-designer').value,
+                designReady: Math.random() > 0.5 ? 'Y' : 'N' // Random for demo
+            };
+            
+            initiatives.push(initiative);
+            updateInitiativesList();
+            updateCapacityDisplays();
+            event.target.reset();
+        }
+
+        // Update initiatives list
+        function updateInitiativesList() {
+            const container = document.getElementById('initiatives-list');
+            
+            if (initiatives.length === 0) {
+                container.innerHTML = '<p style="color: #64748b; text-align: center; padding: 20px;">No initiatives added yet.</p>';
+                return;
+            }
+            
+            container.innerHTML = initiatives.map(init => `
+                <div class="initiative-item">
+                    <div class="initiative-header">
+                        <div class="initiative-name">${init.name}</div>
+                        <div>
+                            <span class="size-badge size-${init.size.toLowerCase()}">${init.size}</span>
+                            <span class="priority-badge priority-${init.priority.toLowerCase()}">${init.priority}</span>
+                        </div>
+                    </div>
+                    <div class="initiative-details">
+                        <strong>Area:</strong> ${init.productArea} | 
+                        <strong>Designer:</strong> ${init.assignedDesigner} | 
+                        <strong>Design Ready:</strong> ${init.designReady} |
+                        <strong>Effort:</strong> ${sizeMapping[init.size]}%
+                    </div>
+                    <button onclick="removeInitiative(${init.id})" style="background: #ef4444; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 12px; cursor: pointer;">Remove</button>
+                </div>
+            `).join('');
+        }
+
+        // Remove initiative
+        function removeInitiative(id) {
+            initiatives = initiatives.filter(init => init.id !== id);
+            updateInitiativesList();
+            updateCapacityDisplays();
+        }
+
+        // Load sample data for testing
+        function loadSampleData() {
+            initiatives = [
+                {
+                    id: 1,
+                    name: 'ZTIA Mobile App Redesign',
+                    productArea: 'Access',
+                    size: 'L',
+                    priority: 'P1',
+                    assignedDesigner: 'Tc Ye',
+                    designReady: 'Y'
+                },
+                {
+                    id: 2,
+                    name: 'Gateway DNS Performance UI',
+                    productArea: 'Devices & Filtering',
+                    size: 'M',
+                    priority: 'P2',
+                    assignedDesigner: 'Thi Le',
+                    designReady: 'N'
+                },
+                {
+                    id: 3,
+                    name: 'Email Security Dashboard V2',
+                    productArea: 'Email Security',
+                    size: 'XL',
+                    priority: 'P1',
+                    assignedDesigner: 'Chris Nemeth',
+                    designReady: 'Y'
+                },
+                {
+                    id: 4,
+                    name: 'DLP Policy Builder',
+                    productArea: 'Data Security',
+                    size: 'L',
+                    priority: 'P2',
+                    assignedDesigner: 'Natalie Yeh',
+                    designReady: 'N'
+                },
+                {
+                    id: 5,
+                    name: 'Magic WAN Onboarding Flow',
+                    productArea: 'Network Services',
+                    size: 'M',
+                    priority: 'P1',
+                    assignedDesigner: 'Nick Reed',
+                    designReady: 'Y'
+                }
+            ];
+            
+            updateInitiativesList();
+            updateCapacityDisplays();
+        }
+
+        // Integration placeholders
+        function showJiraIntegration() {
+            alert('Jira Integration:\n\n1. Install Jira REST API connector\n2. Configure authentication (API token)\n3. Map Jira fields to capacity planner\n4. Set up automated sync\n\nRequired Jira fields:\n- Epic Name\n- T-shirt Size (custom field)\n- Priority\n- Assignee\n- Target Quarter');
+        }
+
+        function showSmartsheetIntegration() {
+            alert('Smartsheet Integration:\n\n1. Install Smartsheet API connector\n2. Configure authentication (access token)\n3. Map sheet columns to capacity planner\n4. Set up automated sync\n\nRequired Smartsheet columns:\n- Initiative Name\n- Product Area\n- T-shirt Size\n- Priority\n- Assigned Designer\n- Target Quarter');
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeDesignerCapacity();
+            document.getElementById('initiative-form').addEventListener('submit', addInitiative);
+            updateCapacityDisplays();
+        });
+    </script>
+</body>
+</html>
