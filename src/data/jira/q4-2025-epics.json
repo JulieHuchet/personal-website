@@ -1,0 +1,12 @@
+[
+  {
+    "key": "RM-26432",
+    "title": "Registrar: OT&E Support",
+    "url": "https://your-jira/browse/RM-26432",
+    "area": "core-resilience",
+    "product": "core-resilience-tier4",
+    "priority": "P4 Normal",
+    "status": "Backlog",
+    "onePagerStatus": "Missing"
+  }
+]

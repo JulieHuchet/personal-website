@@ -11,6 +11,8 @@ export interface Person {
 
 export interface Ship {
   id: string; // Jira ID
+  jiraKey?: string;
+  jiraUrl?: string;
   title: string;
   area: string;
   product: string;
@@ -18,6 +20,9 @@ export interface Ship {
   targetQuarter: string;
   tshirtSizeByRole: Partial<Record<Role, "S" | "M" | "L" | "XL">>;
   status: "Planned" | "Committed" | "Backlog" | "In Review";
+  priority?: "P1" | "P2" | "P3" | "P4";
+  mustHave?: boolean;
+  onePagerStatus?: "missing" | "in_progress" | "ready_for_review" | "approved";
 }
 
 export interface Assignment {

@@ -1,13 +1,15 @@
 {
-  "name": "capacity-planner",
+  "name": "capacity-dashboard",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "wrangler dev",
+    "vite": "vite",
     "build": "vite build",
+    "preview": "vite preview",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "jira:sync:q1": "ts-node scripts/sync-jira-projects.ts --quarter Q1-2026"
   },
   "dependencies": {
     "@cloudflare/kv-asset-handler": "^0.4.1",
@@ -29,6 +31,11 @@
     "eslint-plugin-react-refresh": "^0.4.5",
     "postcss": "^8.4.32",
     "tailwindcss": "^3.4.0",
+    "ts-node": "^10.9.2",
     "vite": "^5.0.8"
+  },
+  "ts-node": {
+    "esm": true,
+    "transpileOnly": true
   }
 }
